@@ -48,6 +48,5 @@ public class Alimento {
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
-
-    // getters e setters
+    
 }
