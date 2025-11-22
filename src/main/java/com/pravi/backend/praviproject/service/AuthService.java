@@ -1,8 +1,8 @@
 package com.pravi.backend.praviproject.service;
 
-import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
