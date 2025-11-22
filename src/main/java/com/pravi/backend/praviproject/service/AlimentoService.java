@@ -1,5 +1,6 @@
 package com.pravi.backend.praviproject.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,38 +9,47 @@ import com.pravi.backend.praviproject.DTO.AlimentoMapper;
 import com.pravi.backend.praviproject.DTO.AlimentoRequestDTO;
 import com.pravi.backend.praviproject.DTO.AlimentoResponseDTO;
 import com.pravi.backend.praviproject.entity.Alimento;
+import com.pravi.backend.praviproject.entity.Usuario;
 import com.pravi.backend.praviproject.repository.AlimentoRepository;
 
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AlimentoService {
 
-    private final AlimentoRepository repository;
+    private final AlimentoRepository alimentoRepository;
 
-    public AlimentoService(AlimentoRepository repository) {
-        this.repository = repository;
-    }
+    public AlimentoResponseDTO cadastrar(AlimentoRequestDTO dto, Usuario usuario) {
 
-    public AlimentoResponseDTO salvar(AlimentoRequestDTO dto) {
         Alimento alimento = AlimentoMapper.toEntity(dto);
-        alimento = repository.save(alimento);
+        alimento.setDataCompra(LocalDate.now());
+        alimento.setUsuario(usuario);
+
+        alimentoRepository.save(alimento);
+
         return AlimentoMapper.toDTO(alimento);
     }
 
-    public List<AlimentoResponseDTO> listar() {
-        return repository.findAll()
+    public List<AlimentoResponseDTO> listar(Usuario usuario) {
+        return alimentoRepository.findByUsuario(usuario)
                 .stream()
                 .map(AlimentoMapper::toDTO)
                 .toList();
     }
 
-    public AlimentoResponseDTO buscarPorId(Long id) {
-        return repository.findById(id)
-                .map(AlimentoMapper::toDTO)
-                .orElse(null);
+    public AlimentoResponseDTO buscarPorId(Long id, Usuario usuario) {
+        Alimento alimento = alimentoRepository.findByIdAlimentoAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Alimento não encontrado ou não pertence ao usuário."));
+
+        return AlimentoMapper.toDTO(alimento);
     }
 
-    public void deletar(Long id) {
-        repository.deleteById(id);
+    public void deletar(Long id, Usuario usuario) {
+
+        Alimento alimento = alimentoRepository.findByIdAlimentoAndUsuario(id, usuario)
+                .orElseThrow(() -> new RuntimeException("Alimento não encontrado ou não pertence ao usuário."));
+
+        alimentoRepository.delete(alimento);
     }
 }

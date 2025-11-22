@@ -1,7 +1,12 @@
 package com.pravi.backend.praviproject.entity;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,7 +50,4 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alimento> alimentos;
-
-    // getters e setters (omitir aqui por brevidade)
-    // ... gere automaticamente com o VS Code ou cole os métodos
 }

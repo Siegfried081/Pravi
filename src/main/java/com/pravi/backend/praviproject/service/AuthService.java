@@ -1,19 +1,27 @@
 package com.pravi.backend.praviproject.service;
 
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.pravi.backend.praviproject.DTO.UsuarioLoginDTO;
 import com.pravi.backend.praviproject.DTO.UsuarioRegisterDTO;
 import com.pravi.backend.praviproject.DTO.UsuarioResponseDTO;
-import com.pravi.backend.praviproject.Utils.PasswordEncoder;
 import com.pravi.backend.praviproject.entity.Usuario;
 import com.pravi.backend.praviproject.repository.UsuarioRepository;
+import com.pravi.backend.praviproject.security.JWTUtil;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
- @Autowired
-    private UsuarioRepository usuarioRepository;
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
 
     public UsuarioResponseDTO register(UsuarioRegisterDTO dto) {
 
@@ -24,7 +32,7 @@ public class AuthService {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
-        usuario.setSenha(PasswordEncoder.encode(dto.senha()));
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
 
         usuarioRepository.save(usuario);
 
@@ -35,19 +43,16 @@ public class AuthService {
         );
     }
 
-    public UsuarioResponseDTO login(UsuarioLoginDTO dto) {
+    public String login(UsuarioLoginDTO dto) {
 
         Usuario usuario = usuarioRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
-        if (!PasswordEncoder.matches(dto.senha(), usuario.getSenha())) {
+        if (!passwordEncoder.matches(dto.senha(), usuario.getSenha())) {
             throw new RuntimeException("Senha incorreta.");
         }
 
-        return new UsuarioResponseDTO(
-                usuario.getIdUsuario(),
-                usuario.getNome(),
-                usuario.getEmail()
-        );
+        // Gere o JWT com id + email
+        return jwtUtil.gerarToken(usuario.getIdUsuario(), usuario.getEmail());
     }
 }

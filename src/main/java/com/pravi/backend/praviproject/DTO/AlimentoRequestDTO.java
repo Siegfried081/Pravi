@@ -1,5 +1,13 @@
 package com.pravi.backend.praviproject.DTO;
 
-public record AlimentoRequestDTO(String nome) {
+import java.time.LocalDate;
 
+import com.pravi.backend.praviproject.entity.enums.Categoria;
+
+public record AlimentoRequestDTO(
+    String nome, 
+    LocalDate dataValidade,
+    Categoria categoria, 
+    String tipo,
+    int quantidade) {
 }
