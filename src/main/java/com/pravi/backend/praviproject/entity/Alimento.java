@@ -38,9 +38,6 @@ public class Alimento {
     @Column(nullable = false)
     private Categoria categoria;
 
-    @Column(nullable = false, length = 50)
-    private String tipo;
-
     @Column(nullable = false)
     private int quantidade;
 

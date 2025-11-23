@@ -8,7 +8,6 @@ public class AlimentoMapper {
         Alimento alimento = new Alimento();
         alimento.setNome(dto.nome());
         alimento.setDataValidade(dto.dataValidade());
-        alimento.setTipo(dto.tipo());
         alimento.setCategoria(dto.categoria());
         alimento.setQuantidade(dto.quantidade());
         return alimento;
@@ -21,7 +20,6 @@ public class AlimentoMapper {
             alimento.getDataValidade(),
             alimento.getDataCompra(),
             alimento.getCategoria(),
-            alimento.getTipo(),
             alimento.getQuantidade()
         );
     }

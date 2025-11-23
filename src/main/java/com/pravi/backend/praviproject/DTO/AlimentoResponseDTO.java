@@ -10,7 +10,6 @@ public record AlimentoResponseDTO(
     LocalDate dataValidade, 
     LocalDate dataCompra, 
     Categoria categoria, 
-    String tipo, 
     int quantidade) {
 
 }

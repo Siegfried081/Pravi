@@ -13,7 +13,12 @@ public class FamiliaMapper {
     public static FamiliaResponseDTO toDTO(Familia familia) {
         return new FamiliaResponseDTO(
             familia.getIdFamilia(),
-            familia.getNomeFamilia()
+            familia.getNomeFamilia(),
+            familia.getCodigoAcesso(),
+            familia.getUsuarios()
+                .stream()
+                .map(usuario -> usuario.getNome())
+                .toList()
         );
     }
 }

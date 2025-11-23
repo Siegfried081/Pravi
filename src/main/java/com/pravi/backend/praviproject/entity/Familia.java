@@ -1,8 +1,8 @@
 package com.pravi.backend.praviproject.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +24,9 @@ public class Familia {
     @Column(nullable = false, length = 100)
     private String nomeFamilia;
 
-    @OneToMany(mappedBy = "familia", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Usuario> usuarios;
+    @Column(nullable = false, unique = true, length = 20)
+    private String codigoAcesso;
+
+    @OneToMany(mappedBy = "familia")
+    private List<Usuario> usuarios = new ArrayList<>();
 }

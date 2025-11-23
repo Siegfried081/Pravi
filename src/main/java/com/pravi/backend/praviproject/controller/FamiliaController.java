@@ -1,45 +1,55 @@
 package com.pravi.backend.praviproject.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pravi.backend.praviproject.DTO.FamiliaRequestDTO;
+import com.pravi.backend.praviproject.DTO.FamiliaCreateDTO;
+import com.pravi.backend.praviproject.DTO.FamiliaJoinDTO;
 import com.pravi.backend.praviproject.DTO.FamiliaResponseDTO;
+import com.pravi.backend.praviproject.entity.Usuario;
+import com.pravi.backend.praviproject.security.UsuarioDetails;
 import com.pravi.backend.praviproject.service.FamiliaService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/familias")
+@RequiredArgsConstructor
 public class FamiliaController {
-private final FamiliaService service;
 
-    public FamiliaController(FamiliaService service) {
-        this.service = service;
+    private final FamiliaService familiaService;
+
+    private Usuario getUsuarioLogado() {
+        UsuarioDetails ud = (UsuarioDetails)
+                SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        return ud.getUsuario();
     }
 
-    @PostMapping
-    public FamiliaResponseDTO salvar(@RequestBody FamiliaRequestDTO dto) {
-        return service.salvar(dto);
+    @PostMapping("/criar")
+    public ResponseEntity<FamiliaResponseDTO> criar(@RequestBody FamiliaCreateDTO dto) {
+        return ResponseEntity.ok(familiaService.criarFamilia(dto, getUsuarioLogado()));
     }
 
-    @GetMapping
-    public List<FamiliaResponseDTO> listar() {
-        return service.listar();
+    @PostMapping("/entrar")
+    public ResponseEntity<FamiliaResponseDTO> entrar(@RequestBody FamiliaJoinDTO dto) {
+        return ResponseEntity.ok(familiaService.entrarFamilia(dto, getUsuarioLogado()));
     }
 
-    @GetMapping("/{id}")
-    public FamiliaResponseDTO buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id);
+    @PostMapping("/sair")
+    public ResponseEntity<Void> sair() {
+        familiaService.sairFamilia(getUsuarioLogado());
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        service.deletar(id);
+    @GetMapping("/minha")
+    public ResponseEntity<FamiliaResponseDTO> minha() {
+        return ResponseEntity.ok(familiaService.minhaFamilia(getUsuarioLogado()));
     }
 }

@@ -8,6 +8,5 @@ public record AlimentoRequestDTO(
     String nome, 
     LocalDate dataValidade,
     Categoria categoria, 
-    String tipo,
     int quantidade) {
 }

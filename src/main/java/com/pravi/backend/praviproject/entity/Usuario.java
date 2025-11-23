@@ -1,5 +1,6 @@
 package com.pravi.backend.praviproject.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -40,5 +41,5 @@ public class Usuario {
     private Familia familia;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Alimento> alimentos;
+    private List<Alimento> alimentos = new ArrayList<>();
 }

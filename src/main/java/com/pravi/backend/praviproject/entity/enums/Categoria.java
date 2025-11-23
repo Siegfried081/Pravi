@@ -1,9 +1,10 @@
 package com.pravi.backend.praviproject.entity.enums;
 
 public enum Categoria {
-    PERECIVEL,
-    NAO_PERECIVEL,
     GRAO,
     LATICINIO,
-    BEBIDA
+    BEBIDA,
+    CARNE,
+    FRUTA,
+    VEGETAL
 }
