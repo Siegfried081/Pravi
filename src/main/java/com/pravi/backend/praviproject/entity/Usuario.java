@@ -1,6 +1,5 @@
 package com.pravi.backend.praviproject.entity;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -29,9 +28,6 @@ public class Usuario {
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-
-    @Column(nullable = false)
-    private LocalDate dataNascimento;
 
     @Column(length = 100)
     private String nomeFamilia;
