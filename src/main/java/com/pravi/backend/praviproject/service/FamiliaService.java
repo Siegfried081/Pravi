@@ -36,25 +36,24 @@ public class FamiliaService {
             throw new RuntimeException("Você já pertence a uma família.");
         }
 
-        // criar família
         Familia familia = new Familia();
         familia.setNomeFamilia(dto.nomeFamilia());
         familia.setCodigoAcesso(gerarCodigoAcesso());
         familia.setUsuarios(new ArrayList<>());
 
-        // Reanexar o usuário ao contexto JPA
         usuarioLogado = usuarioRepository.findById(usuarioLogado.getIdUsuario())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
-        // vinculação correta
         usuarioLogado.setFamilia(familia);
+        usuarioLogado.setNomeFamilia(dto.nomeFamilia()); // 🔥 IMPORTANTE
+
         familia.getUsuarios().add(usuarioLogado);
 
-        // agora sim: merge, não persist
         familia = familiaRepository.saveAndFlush(familia);
 
         return FamiliaMapper.toDTO(familia);
     }
+
 
     public FamiliaResponseDTO salvar(FamiliaRequestDTO dto) {
         Familia familia = FamiliaMapper.toEntity(dto);
@@ -79,20 +78,26 @@ public class FamiliaService {
         familiaRepository.deleteById(id);
     }
 
-    public FamiliaResponseDTO entrarFamilia(FamiliaJoinDTO dto, Usuario usuario) {
+    public FamiliaResponseDTO entrarFamilia(FamiliaJoinDTO dto, Usuario usuarioLogado) {
+
+        // 1. Recarrega o usuário do banco (garante consistência)
+        Usuario usuario = usuarioRepository.findById(usuarioLogado.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        // 2. Busca família
         Familia familia = familiaRepository.findByCodigoAcesso(dto.codigoAcesso())
                 .orElseThrow(() -> new RuntimeException("Código de acesso inválido"));
 
+        // 3. Vincula e salva
         usuario.setFamilia(familia);
         usuarioRepository.save(usuario);
 
         return FamiliaMapper.toDTO(familia);
-    }    
+    }
 
     @Transactional
     public void sairFamilia(Usuario usuarioLogado) {
 
-        // 1) Reanexa o usuário ao contexto
         Usuario usuario = usuarioRepository.findById(usuarioLogado.getIdUsuario())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
@@ -101,24 +106,24 @@ public class FamiliaService {
             throw new RuntimeException("Você não pertence a nenhuma família.");
         }
 
-        // 2) Reanexa a família ao contexto JPA
         familia = familiaRepository.findById(familia.getIdFamilia())
                 .orElseThrow(() -> new RuntimeException("Família não encontrada."));
 
-        // 3) Remove o usuário da família (com coleção já inicializada)
         familia.getUsuarios().remove(usuario);
 
-        // 4) Desvincula o usuário da família
         usuario.setFamilia(null);
-        usuarioRepository.save(usuario);
+        usuario.setNomeFamilia(null); // 🔥 IMPORTANTE
 
-        // 5) Se a família ficar vazia -> deletar
+        usuarioRepository.save(usuario);
+        
+
         if (familia.getUsuarios().isEmpty()) {
             familiaRepository.delete(familia);
         } else {
             familiaRepository.save(familia);
         }
     }
+
 
     public FamiliaResponseDTO minhaFamilia(Usuario usuario) {
 

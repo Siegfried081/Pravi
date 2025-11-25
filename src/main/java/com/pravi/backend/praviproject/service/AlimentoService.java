@@ -11,6 +11,7 @@ import com.pravi.backend.praviproject.DTO.AlimentoResponseDTO;
 import com.pravi.backend.praviproject.entity.Alimento;
 import com.pravi.backend.praviproject.entity.Usuario;
 import com.pravi.backend.praviproject.repository.AlimentoRepository;
+import com.pravi.backend.praviproject.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class AlimentoService {
 
     private final AlimentoRepository alimentoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public AlimentoResponseDTO cadastrar(AlimentoRequestDTO dto, Usuario usuario) {
 
@@ -55,21 +57,25 @@ public class AlimentoService {
 
     public List<AlimentoResponseDTO> listarAlimentosDaFamilia(Usuario usuarioLogado) {
 
-    // Se o usuário não tem família
-    if (usuarioLogado.getFamilia() == null) {
-        throw new RuntimeException("Você não está em uma família.");
+        // 1. Recarrega o usuário atualizado diretamente do banco
+        Usuario usuario = usuarioRepository.findById(usuarioLogado.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        // 2. Verifica família já atualizada
+        if (usuario.getFamilia() == null) {
+            throw new RuntimeException("Você não está em uma família.");
+        }
+
+        // 3. Obtém membros da família
+        List<Usuario> membros = usuario.getFamilia().getUsuarios();
+
+        // 4. Busca alimentos de todos os membros
+        List<Alimento> alimentos = alimentoRepository.findByUsuarioIn(membros);
+
+        return alimentos.stream()
+                .map(AlimentoMapper::toDTO)
+                .toList();
     }
 
-    // Pega os membros da família
-    List<Usuario> membros = usuarioLogado.getFamilia().getUsuarios();
-
-    // Busca todos os alimentos dos membros
-    List<Alimento> alimentos = alimentoRepository.findByUsuarioIn(membros);
-
-    // Converte para DTO
-    return alimentos.stream()
-            .map(AlimentoMapper::toDTO)
-            .toList();
-}
 
 }

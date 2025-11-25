@@ -16,10 +16,6 @@ public class UsuarioDetails implements UserDetails {
         this.usuario = usuario;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList(); // sem roles por enquanto
@@ -50,4 +46,11 @@ public class UsuarioDetails implements UserDetails {
     public Long getId() {
         return usuario.getIdUsuario();
     }
+
+    // ADICIONAR ISSO
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+
 }
