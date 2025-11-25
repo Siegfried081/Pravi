@@ -77,5 +77,27 @@ public class AlimentoService {
                 .toList();
     }
 
+    public List<Alimento> listarVencidos(Usuario usuario) {
+        LocalDate hoje = LocalDate.now();
+        return alimentoRepository.findByUsuario(usuario)
+                .stream()
+                .filter(a -> a.getDataValidade().isBefore(hoje))
+                .toList();
+    }
+
+    public List<Alimento> listarVencidosFamilia(Usuario usuario) {
+
+        if (usuario.getFamilia() == null)
+            return List.of();
+
+        List<Usuario> membros = usuario.getFamilia().getUsuarios();
+        LocalDate hoje = LocalDate.now();
+
+        return alimentoRepository.findByUsuarioIn(membros)
+                .stream()
+                .filter(a -> a.getDataValidade().isBefore(hoje))
+                .toList();
+    }
+
 
 }
