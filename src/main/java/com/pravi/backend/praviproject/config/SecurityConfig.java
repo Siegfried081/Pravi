@@ -81,7 +81,8 @@ public class SecurityConfig {
         // ORIGENS PERMITIDAS (teu front)
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://127.0.0.1:5173"
+                "http://127.0.0.1:5173",
+                "https://pravi-frontend.vercel.app"
         ));
 
         // Métodos liberados
