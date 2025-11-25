@@ -13,4 +13,5 @@ public interface AlimentoRepository extends JpaRepository<Alimento, Long> {
 
     Optional<Alimento> findByIdAlimentoAndUsuario(Long idAlimento, Usuario usuario);
 
+    List<Alimento> findByUsuarioIn(List<Usuario> usuarios);
 }

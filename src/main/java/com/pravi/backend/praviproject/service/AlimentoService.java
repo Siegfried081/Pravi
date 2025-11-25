@@ -52,4 +52,24 @@ public class AlimentoService {
 
         alimentoRepository.delete(alimento);
     }
+
+    public List<AlimentoResponseDTO> listarAlimentosDaFamilia(Usuario usuarioLogado) {
+
+    // Se o usuário não tem família
+    if (usuarioLogado.getFamilia() == null) {
+        throw new RuntimeException("Você não está em uma família.");
+    }
+
+    // Pega os membros da família
+    List<Usuario> membros = usuarioLogado.getFamilia().getUsuarios();
+
+    // Busca todos os alimentos dos membros
+    List<Alimento> alimentos = alimentoRepository.findByUsuarioIn(membros);
+
+    // Converte para DTO
+    return alimentos.stream()
+            .map(AlimentoMapper::toDTO)
+            .toList();
+}
+
 }

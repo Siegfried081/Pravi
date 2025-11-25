@@ -14,7 +14,9 @@ public class UsuarioMapper {
         return new UsuarioResponseDTO(
             usuario.getIdUsuario(),
             usuario.getNome(),
-            usuario.getEmail()
+            usuario.getEmail(),
+            usuario.getFamilia() != null ? usuario.getFamilia().getIdFamilia() : null,
+            usuario.getFamilia() != null ? usuario.getFamilia().getNomeFamilia() : null
         );
     }
 }

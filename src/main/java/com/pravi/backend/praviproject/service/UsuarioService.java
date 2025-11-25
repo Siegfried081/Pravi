@@ -40,4 +40,9 @@ public class UsuarioService {
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+    public UsuarioResponseDTO getMe(Usuario usuario) {
+        return UsuarioMapper.toDTO(usuario);
+    }
+
 }

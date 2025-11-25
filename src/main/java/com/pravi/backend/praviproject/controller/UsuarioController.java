@@ -2,6 +2,7 @@ package com.pravi.backend.praviproject.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pravi.backend.praviproject.DTO.UsuarioMapper;
 import com.pravi.backend.praviproject.DTO.UsuarioRequestDTO;
 import com.pravi.backend.praviproject.DTO.UsuarioResponseDTO;
+import com.pravi.backend.praviproject.security.UsuarioDetails;
 import com.pravi.backend.praviproject.service.UsuarioService;
 
 @RestController
@@ -42,4 +45,13 @@ public class UsuarioController {
     public void deletar(@PathVariable Long id) {
         service.deletar(id);
     }
+
+    @GetMapping("/me")
+    public UsuarioResponseDTO getMe() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var usuarioDetails = (UsuarioDetails) auth.getPrincipal();
+
+        return UsuarioMapper.toDTO(usuarioDetails.getUsuario());
+    }
+
 }

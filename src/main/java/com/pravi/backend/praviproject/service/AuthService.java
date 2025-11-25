@@ -34,14 +34,20 @@ public class AuthService {
         usuario.setEmail(dto.email());
         usuario.setSenha(passwordEncoder.encode(dto.senha()));
 
+        // ao registrar, usuario não tem família ainda
+        usuario.setFamilia(null);
+
         usuarioRepository.save(usuario);
 
         return new UsuarioResponseDTO(
-                usuario.getIdUsuario(),
-                usuario.getNome(),
-                usuario.getEmail()
+            usuario.getIdUsuario(),
+            usuario.getNome(),
+            usuario.getEmail(),
+            null,       
+            null                
         );
     }
+
 
     public String login(UsuarioLoginDTO dto) {
 

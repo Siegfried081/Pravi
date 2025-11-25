@@ -79,4 +79,16 @@ public class AlimentoController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/familia")
+    public ResponseEntity<List<AlimentoResponseDTO>> listarFamilia() {
+
+        UsuarioDetails usuarioDetails = (UsuarioDetails)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Usuario usuarioLogado = usuarioDetails.getUsuario();
+
+        return ResponseEntity.ok(alimentoService.listarAlimentosDaFamilia(usuarioLogado));
+    }
+
+
 }
