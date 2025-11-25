@@ -23,8 +23,8 @@ public class AvisoVencimentoScheduler {
      * Cron do Spring: segundo minuto hora dia-mês mês dia-semana
      * 0 0 20 * * *  -> todos os dias às 20:00
      */
-    //@Scheduled(cron = "0 0 20 * * *")
-    @Scheduled(cron = "*/10 * * * * *", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "0 0 20 * * *")
+    //@Scheduled(cron = "*/10 * * * * *", zone = "America/Sao_Paulo")
     public void enviarAvisosDiarios() {
 
         log.info("[Scheduler] Iniciando verificação de alimentos a 7 dias de vencer...");
