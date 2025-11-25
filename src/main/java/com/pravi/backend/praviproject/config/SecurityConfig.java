@@ -1,5 +1,6 @@
 package com.pravi.backend.praviproject.config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -33,34 +34,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // Desabilita CSRF (API REST stateless)
+        // API REST = sem CSRF
         http.csrf(csrf -> csrf.disable());
 
-        // Habilita CORS usando a configuração abaixo
+        // Usa o CORS configurado abaixo
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-        // Stateless: sem sessão no servidor
-        http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
+        // Stateless
+        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Endpoints públicos x privados
+        // Rotas públicas
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
         );
 
-        // Filtro JWT antes do filtro padrão
+        // Filtro JWT
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // AuthenticationManager moderno
+    // AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
 
         auth.userDetailsService(usuarioDetailsService)
                 .passwordEncoder(passwordEncoder());
@@ -73,29 +71,32 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Config global de CORS
+    // ===============================
+    // CORS — VERSÃO FINAL IMPORTANTE
+    // ===============================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // ORIGENS PERMITIDAS (teu front)
-        configuration.setAllowedOrigins(List.of(
+        configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "https://pravi-frontend.vercel.app"
+                "https://pravi-frontend.vercel.app",
+                "http://34.204.186.82"      // <---- ORIGEM DO NGINX NA EC2
         ));
 
-        // Métodos liberados
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Headers liberados
         configuration.setAllowedHeaders(List.of("*"));
 
-        // Se for usar cookies/autorização no futuro
+        // Opcional, mas recomendado
+        configuration.setExposedHeaders(List.of("Authorization"));
+
+        // Caso use Authorization Bearer
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }
