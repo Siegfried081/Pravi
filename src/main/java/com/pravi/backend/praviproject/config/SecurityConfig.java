@@ -82,7 +82,7 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "https://pravi-frontend.vercel.app",
-                "http://34.204.186.82"      // <---- ORIGEM DO NGINX NA EC2
+                "http://44.200.79.146"      // <---- ORIGEM DO NGINX NA EC2
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
